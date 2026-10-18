@@ -1,0 +1,15 @@
+# Python / Jupyter Cache
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# Data & Output Files (Keep datasets local)
+*.xlsx
+pipeline_outputs/
+
+# IDE & System Files
+.DS_Store
+.vscode/
+.idea/
