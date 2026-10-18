@@ -18,7 +18,7 @@ $$\text{PRB Downlink Utilization (\%)} = 1.277 \times \text{Traffic (GB)} + 5.99
 
 ## 🔮 3. Time-Series Traffic Forecasting Models
 
-### A. XGBoost Regressor (Selected Primary Model)
+### A. XGBoost Regressor (Primary Model)
 
 | 2026 Traffic Forecast | Expanding-Window Cross-Validation |
 | :---: | :---: |
