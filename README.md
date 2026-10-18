@@ -1,60 +1,245 @@
-<div align="center">
+ <div align="center">
 
-# 📶 Telecom KPI Analysis, XGBoost Forecasting & Automated Capacity Planning Engine
+# 📶 Telecom KPI Analysis, XGBoost Forecasting & Automated Capacity Planning
 
-![Python Version](https://img.shields.io/badge/Python-3.8%2B-blue.svg)
+![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
-![XGBoost](https://img.shields.io/badge/XGBoost-v1.7%2B-orange.svg)
-![Prophet](https://img.shields.io/badge/Prophet-v1.1%2B-lightgrey.svg)
-![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-FF6F00.svg)
-![Status](https://img.shields.io/badge/Status-Production--Ready-brightgreen.svg)
+![XGBoost](https://img.shields.io/badge/XGBoost-Regression-orange.svg)
+![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-F37626.svg)
 
-**An end-to-end AI/ML network engineering framework for Circuit-Switched (CS) and Packet-Switched (PS) KPI analysis, multi-model traffic forecasting, PRB resource regression, and automated site configuration upgrade planning.**
-
----
+**An end-to-end telecom network engineering project for CS/PS KPI analysis, traffic forecasting, PRB utilization estimation, and automated site capacity planning.**
 
 </div>
 
-## 📋 Executive Overview
+---
 
-Mobile network operators face rapidly growing data traffic demands. Expanding physical site infrastructure without predictive modeling leads to inefficient Capital Expenditure (CapEx), while delayed upgrades cause cell congestion and degraded Quality of Service (QoS).
+## 📋 Project Overview
 
-This repository delivers an automated telecom capacity planning pipeline:
-1. **Multi-Layer KPI Assessment**: Evaluates 2G/3G Voice metrics (CSSR, CDR, Availability) and 4G Data performance (Throughput, PRB Utilization, E-RAB Drop Rate, Handover Success Rate) across 5 geographic regions.
-2. **Multi-Model Time-Series Forecasting**: Evaluates **XGBoost Regressor**, **Meta Prophet**, and **Holt-Winters Exponential Smoothing** across expanding-window backtesting folds to project 12-month traffic through December 2026.
-3. **Resource Regression Modeling**: Maps payload growth to Physical Resource Block (PRB) Downlink Utilization using Ordinary Least Squares (OLS) regression after dynamic Interquartile Range ($1.5 \times \text{IQR}$) outlier cleaning ($R^2 = 0.832$).
-4. **Automated Hardware Upgrade Engine**: Translates macro traffic forecasts down to site-level PRB utilization, evaluates cells against a **70% PRB congestion threshold**, and automatically steps site hardware up a 7-stage configuration ladder.
+Mobile network operators face increasing traffic demands that can lead to network congestion, reduced throughput, and degraded Quality of Service (QoS).
+
+This project combines telecom KPI analysis, machine learning, time-series forecasting, and automated capacity planning to support data-driven network engineering decisions.
+
+### Key Features
+
+- **CS & PS KPI Analysis:** Analyze voice and mobile data network performance.
+- **Traffic Forecasting:** Compare XGBoost, Prophet, Holt-Winters, and Seasonal Naive models.
+- **Model Validation:** Evaluate forecasting accuracy using historical holdout folds.
+- **PRB Utilization Regression:** Estimate downlink resource utilization from traffic.
+- **Automated Capacity Planning:** Identify potentially congested sites and recommend configuration upgrades.
+- **Visual Reporting:** Generate charts and Excel reports for engineering analysis.
 
 ---
 
-## ⚙️ End-to-End System Architecture
+## ⚙️ System Architecture
 
 ```mermaid
 flowchart TD
-    A[Raw Input Data: Multi-Sheet Excel] --> B[Data Cleaning & Dynamic IQR Outlier Filter]
-    B --> C1[CS & PS Regional KPI Dashboards]
-    B --> C2[Time-Series Feature Engineering]
-    
-    C2 --> D1[XGBoost 2026 Traffic Forecast]
-    C2 --> D2[Baseline Models: Prophet & Holt-Winters]
-    
-    D1 --> E[Calculate YoY Traffic Growth Factor: +39.12%]
-    E --> F[Site-Level Dec 2026 Payload Projection]
-    
-    F --> G[OLS Linear Regression: Traffic Payload vs PRB %]
-    G --> H{Projected PRB Load > 70%?}
-    
-    H -- Yes --> I[Trigger Upgrade Engine: Step Up Hardware Ladder]
-    H -- No --> J[Maintain Current Site Configuration]
-    
-    I --> K[Export Visual Visualizations & Executive Excel Report]
-    J --> K
+    A[Excel Input Data] --> B[Data Preparation]
+    B --> C1[CS KPI Analysis]
+    B --> C2[PS KPI Analysis]
+    B --> D[Traffic Feature Engineering]
+    D --> E[Forecast Model Evaluation]
+    E --> F[Selected Traffic Forecast]
+    F --> G[Site-Level Traffic Projection]
+    G --> H[Traffic-to-PRB Regression]
+    H --> I{PRB Utilization Above 70%?}
+    I -- Yes --> J[Recommend Capacity Upgrade]
+    I -- No --> K[Maintain Current Configuration]
+    J --> L[Generate Reports and Charts]
+    K --> L
+```
+
+---
+
+## 📊 Stage 1: Telecom KPI Analysis
+
+The project analyzes network performance across the available regions:
+
+`CAI` · `ALX` · `DEL` · `SIN` · `UPP`
+
+### 1. Circuit-Switched (CS) KPI Analysis
+
+The CS analysis focuses on voice network performance and service availability.
+
+Key metrics may include:
+
+- Call Setup Success Rate (CSSR)
+- Call Drop Rate (CDR)
+- Network Availability
+- CS Traffic
+
+![CS KPI Dashboard](images/cs.png)
+
+### 2. Packet-Switched (PS) KPI Analysis
+
+The PS analysis focuses on packet-switched mobile data performance.
+
+Key metrics may include:
+
+- Data Traffic
+- PRB Downlink Utilization
+- Throughput (Mbps)
+- E-RAB Drop Rate
+- Handover Success Rate
+
+![PS KPI Dashboard](images/ps.jpg)
+
+---
+
+## 📈 Stage 2: PRB Resource Utilization Regression
+
+Linear regression is used to model the relationship between traffic volume and Physical Resource Block (PRB) downlink utilization.
+
+### Regression Model
+
+The following equation was reported in the project analysis and should be verified against the final regression output.
+
+\[
+\text{PRB DL Utilization (\%)} = 1.277 \times \text{Traffic (GB)} + 5.99
+\]
+
+**Reported \(R^2 = 0.832\)**
+
+![Traffic and PRB Regression](images/linear_regression.png)
+
+### Why This Matters
+
+The regression model helps estimate future resource utilization based on projected traffic, supporting early identification of sites that may require capacity upgrades.
+
+**Important:** Traffic units must be consistent with those used to train the regression model. The reported equation and \(R^2\) value should be updated if the final model produces different results.
+
+---
+
+## 🔮 Stage 3: Traffic Forecasting and Model Evaluation
+
+The project compares multiple forecasting algorithms to identify a suitable model for projecting network traffic.
+
+### A. XGBoost Regressor
+
+XGBoost is a gradient-boosting model that can learn nonlinear relationships between engineered time-series features and traffic volume.
+
+The current project draft reports an overall mean MAPE of **5.57%**.
+
+#### 2026 Traffic Forecast
+
+![XGBoost 2026 Forecast](images/xgboost_forecast_2026.jpg)
+
+#### Historical Validation
+
+![XGBoost Validation](images/xgboost_validation.jpg)
+
+### B. Prophet
+
+Prophet is an additive forecasting model designed to capture trends and seasonal patterns.
+
+The current project draft reports an overall mean MAPE of **5.74%**.
+
+#### 2023 Validation
+
+![Prophet 2023 Validation](images/prophet%202023%20validation.jpg)
+
+#### 2024 Validation
+
+![Prophet 2024 Validation](images/prophet%202024%20validation.jpg)
+
+#### 2025 Validation
+
+![Prophet 2025 Validation](images/prophet_2025_validation.jpg)
+
+#### 2026 Forecast
+
+![Prophet 2026 Forecast](images/prophet_2026_forecast.png)
+
+### C. Holt-Winters Exponential Smoothing
+
+Holt-Winters models the level, trend, and seasonality of a time series.
+
+The current project draft reports an overall mean MAPE of **11.33%**.
+
+#### 2026 Forecast
+
+![Holt-Winters 2026 Forecast](images/holtwinter_2026_forecasting.png)
+
+#### 2025 Validation
+
+![Holt-Winters 2025 Validation](images/holtwinter_2025_validation.png)
+
+### 🏆 Forecasting Model Comparison
+
+The following metrics are taken from the existing project draft and should be checked against the latest validation results.
+
+| Model | 2023 MAPE | 2024 MAPE | 2025 MAPE | Mean MAPE |
+|---|---:|---:|---:|---:|
+| **XGBoost** | 5.97% | 8.56% | 2.19% | **5.57%** |
+| Prophet | 7.04% | 7.11% | 3.07% | 5.74% |
+| Holt-Winters | 15.96% | 5.04% | 12.99% | 11.33% |
+| Seasonal Naive | 25.35% | 20.58% | 19.45% | 21.79% |
+
+**MAPE (Mean Absolute Percentage Error)** measures the average absolute percentage difference between actual and predicted traffic. Lower values indicate better accuracy on the evaluated data.
+
+Based on the reported mean MAPE, XGBoost achieved the lowest average error among the listed models.
+
+---
+
+## ⚡ Stage 4: Automated Site Capacity Planning
+
+The capacity-planning engine translates traffic projections into site-level resource utilization estimates and evaluates whether capacity upgrades may be required.
+
+### Traffic Growth Projection
+
+The project draft reports the following aggregate traffic figures:
+
+| Metric | Reported Value |
+|---|---:|
+| December 2025 Baseline Traffic | 2,000 TB/day |
+| December 2026 Forecast | 2,780.34 TB/day |
+| Reported Year-over-Year Growth | 39.12% |
+
+These figures must be verified against the final forecasting output before being treated as confirmed results.
+
+### PRB Congestion Threshold
+
+The draft implementation uses **70% PRB DL Utilization** as the threshold for identifying potentially congested sites.
+
+The decision process is:
+
+1. Estimate future traffic.
+2. Convert the traffic projection into estimated PRB utilization.
+3. Compare the estimated utilization with the configured threshold.
+4. Recommend an appropriate upgrade when the threshold is exceeded.
+5. Retain the current configuration when an upgrade is not indicated.
+
+### Hardware Upgrade Strategy
+
+The upgrade engine evaluates available site configuration options in sequence, according to the configuration mapping implemented in the project.
+
+The intended strategy is to evaluate possible capacity improvements before recommending a new site or cell.
+
+Possible configuration options include:
+
+- Normal 3-sector configuration
+- Normal 4-sector configuration
+- FDD MIMO
+- First-carrier TDD
+- Second-carrier TDD
+- TDD Massive MIMO
+- New site or cell expansion
+
+**Note:** The actual upgrade order must match the configuration mapping and decision logic in the final Python code.
+
+---
+
+## 🗂️ Repository Structure
+
+```text
 telecom-capacity-forecasting/
-├── Capacity_Planning_GUI.ipynb   # Interactive Jupyter Notebook dashboard GUI
-├── capacity_planning_app.py      # Automated CLI pipeline execution script
-├── requirements.txt              # Environment dependencies
-├── README.md                     # Project documentation
-├── images/                       # Local image assets directory
+│
+├── Capacity_Planning_GUI.ipynb
+├── capacity_planning_app.py
+├── requirements.txt
+├── README.md
+│
+├── images/
 │   ├── cs.png
 │   ├── ps.jpg
 │   ├── linear_regression.png
@@ -66,30 +251,122 @@ telecom-capacity-forecasting/
 │   ├── prophet_2026_forecast.png
 │   ├── holtwinter_2026_forecasting.png
 │   └── holtwinter_2025_validation.png
-└── pipeline_outputs/             # Automatically generated at runtime
+│
+└── pipeline_outputs/
     ├── network_forecast.png
     ├── prb_regression.png
     ├── upgrades.png
-    └── capacity_plan_dec2026.xlsx # Multi-sheet executive Excel report
-    # 1. Clone repository
-git clone [https://github.com/hatemhamid/Telecom-kpi-analysis-and-capacity-planning.git](https://github.com/hatemhamid/Telecom-kpi-analysis-and-capacity-planning.git)
-cd Telecom-kpi-analysis-and-capacity-planning
+    └── capacity_plan_dec2026.xlsx
+```
 
-# 2. Create and activate virtual environment
+**Important:** This structure is based on the project draft. Keep only the files and directories that actually exist in your repository. GitHub paths are case-sensitive, and image filenames must match exactly.
+
+---
+
+## 📥 Dataset Specifications
+
+The draft pipeline expects an Excel workbook named:
+
+`Project Data - Traffic & KPIs.xlsx`
+
+The following table describes the expected data structure. Verify the exact sheet and column names against your actual workbook and Python code.
+
+| Worksheet | Example Columns | Purpose |
+|---|---|---|
+| `Network Traffic` | `Date`, `Traffic` | Aggregate network traffic |
+| `PS KPIs` | `Site ID`, `Region`, `Y-M`, `Data Traffic (GB)`, `PRB DL Utilization`, `Throughput (Mbps)` | Packet-switched site KPIs |
+| `CS KPIs` | `Site ID`, `Region`, `Y-M`, `Availability`, `CDR`, `CSSR`, `CS Traffic - Total` | Circuit-switched site KPIs |
+| `Sites Configurations` | `Site ID`, `Confgurations` | Site configuration mapping |
+
+Sheet names and column names must match the actual workbook. For example, `Site_Cinfiguration` and `Sites Configurations` are not interchangeable.
+
+---
+
+## 💻 Installation and Setup
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/eslamwaheed02/telecom-capacity-forecasting.git
+cd telecom-capacity-forecasting
+```
+
+### 2. Create a Virtual Environment
+
+```bash
 python -m venv venv
-# On Windows:
-venv\Scripts\activate
-# On Mac/Linux:
+```
+
+### 3. Activate the Environment
+
+**Windows PowerShell**
+
+```powershell
+.\venv\Scripts\Activate.ps1
+```
+
+**macOS / Linux**
+
+```bash
 source venv/bin/activate
+```
 
-# 3. Install dependencies
+### 4. Install Dependencies
+
+```bash
 pip install -r requirements.txt
-# Option 1: Run complete background pipeline via CLI
-python capacity_planning_app.py
+```
 
-# Option 2: Launch interactive GUI in Jupyter Notebook
+---
+
+## 🚀 How to Run
+
+### Option 1: Run the Python Pipeline
+
+```bash
+python capacity_planning_app.py
+```
+
+### Option 2: Launch the Jupyter Notebook
+
+```bash
 jupyter notebook Capacity_Planning_GUI.ipynb
-<ElicitationsGroup>
-  <Elicitation prompt="How to add GitHub project badges or workflow status tags?" title="Add workflow badges?"/>
-  <Elicitation prompt="Generate an MIT LICENSE file content for this repository." title="Generate LICENSE file?"/>
-</ElicitationsGroup>
+```
+
+Use the actual script and notebook filenames available in the repository. These commands may need adjustment if your project uses different entry points.
+
+---
+
+## 📄 Output Artifacts
+
+Depending on the implementation, the pipeline may generate the following outputs:
+
+| Output | Description |
+|---|---|
+| `capacity_plan_dec2026.xlsx` | Excel report containing forecasting and capacity-planning results |
+| `network_forecast.png` | Traffic forecast visualization |
+| `prb_regression.png` | Traffic-to-PRB regression visualization |
+| `upgrades.png` | Capacity upgrade visualization |
+
+Generated files may not exist until the application has been executed successfully.
+
+---
+
+## 🎯 Project Objectives
+
+This project demonstrates the integration of:
+
+- Telecom network KPI analysis
+- Machine learning for traffic forecasting
+- Time-series model comparison and validation
+- Traffic-to-resource utilization regression
+- Rule-based network capacity planning
+- Automated engineering reporting
+
+The goal is to support proactive capacity management through data-driven analysis and forecasting.
+
+---
+
+## 📜 License
+
+This project is intended to use the MIT License if a corresponding `LICENSE` file is included in the repository.
