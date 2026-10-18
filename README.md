@@ -1,41 +1,51 @@
-## 📊 1. Network KPI Analysis (CS & PS Layers)
+<div align="center">
 
-| Circuit-Switched (CS) KPIs Analysis | Packet-Switched (PS) KPIs Analysis |
-| :---: | :---: |
-| <img src="images/cs.png" alt="CS KPI Analysis Dashboard" width="100%"/> | <img src="images/ps.jpg" alt="PS KPI Analysis Dashboard" width="100%"/> |
+# 📶 Telecom KPI Analysis, XGBoost Forecasting & Automated Capacity Planning Engine
+
+![Python Version](https://img.shields.io/badge/Python-3.8%2B-blue.svg)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
+![XGBoost](https://img.shields.io/badge/XGBoost-v1.7%2B-orange.svg)
+![Prophet](https://img.shields.io/badge/Prophet-v1.1%2B-lightgrey.svg)
+![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-FF6F00.svg)
+![Status](https://img.shields.io/badge/Status-Production--Ready-brightgreen.svg)
+
+**An end-to-end AI/ML framework for Circuit-Switched (CS) & Packet-Switched (PS) KPI assessment, multi-model traffic forecasting, PRB resource regression modeling, and automated site-level hardware upgrade recommendation.**
 
 ---
 
-## 📈 2. PRB Utilization Modeling (Linear Regression)
-
-<div align="center">
-  <img src="images/linear_regression.png" alt="PRB vs Traffic Linear Regression" width="85%"/>
 </div>
 
-$$\text{PRB Downlink Utilization (\%)} = 1.277 \times \text{Traffic (GB)} + 5.99 \quad (R^2 = 0.832)$$
+## 📋 Executive Overview
+
+Mobile network operators face exponentially growing data demand. Expanding infrastructure blindly leads to wasted Capital Expenditure (CapEx), while delayed expansion causes network congestion and degraded Quality of Service (QoS). 
+
+This project delivers a complete, automated end-to-end Telecom Capacity Planning & Optimization pipeline:
+1. **Network Health Assessment**: Monitors 2G/3G CS Voice metrics (CSSR, CDR, Availability) and 4G PS Data metrics (Throughput, PRB Utilization, E-RAB Drop Rate, Handover Success Rate) across 5 geographical regions.
+2. **Multi-Model Traffic Forecasting**: Compares **XGBoost Regressor**, **Meta Prophet**, and **Holt-Winters Exponential Smoothing** using expanding-window backtesting to forecast 12-month network traffic through December 2026.
+3. **Resource Utilization Modeling**: Fits Ordinary Least Squares (OLS) regression between Traffic (GB) and PRB DL Utilization (%) after automated Interquartile Range ($1.5 \times \text{IQR}$) residual outlier rejection ($R^2 = 0.832$).
+4. **Rule-Based Capacity Upgrade Engine**: Projects 2026 traffic to individual site cells, checks against a **70% PRB utilization threshold**, and automatically steps site configurations up a 7-stage hardware upgrade ladder.
 
 ---
 
-## 🔮 3. Time-Series Traffic Forecasting Models
+## ⚙️ End-to-End System Architecture
 
-### A. XGBoost Regressor (Primary Model)
-
-| 2026 Traffic Forecast | Expanding-Window Cross-Validation |
-| :---: | :---: |
-| <img src="images/xgboost_forecast_2026.jpg" alt="XGBoost 2026 Forecast" width="100%"/> | <img src="images/xgboost_validation.jpg" alt="XGBoost Cross Validation" width="100%"/> |
-
----
-
-### B. Prophet Model
-
-| Prophet 2026 Forecast | Prophet 2025 Holdout Validation |
-| :---: | :---: |
-| <img src="images/prophet_2026_forecast.png" alt="Prophet 2026 Forecast" width="100%"/> | <img src="images/prophet_2025_validation.jpg" alt="Prophet 2025 Validation" width="100%"/> |
-
----
-
-### C. Holt-Winters Exponential Smoothing
-
-| Holt-Winters 2026 Forecast | Holt-Winters 2025 Holdout Validation |
-| :---: | :---: |
-| <img src="images/holtwinter_2026_forecasting.png" alt="Holt-Winters 2026 Forecast" width="100%"/> | <img src="images/holtwinter_2025_validation.png" alt="Holt-Winters 2025 Validation" width="100%"/> |
+```mermaid
+flowchart TD
+    A[Raw Input Data: Excel Workbook] --> B[Data Cleaning & Dynamic IQR Outlier Filter]
+    B --> C1[CS & PS KPI Performance Dashboards]
+    B --> C2[Time-Series Feature Engineering]
+    
+    C2 --> D1[XGBoost 2026 Traffic Forecast]
+    C2 --> D2[Baseline Models: Prophet & Holt-Winters]
+    
+    D1 --> E[Calculate YoY Growth Factor: +39.12%]
+    E --> F[Site-Level Dec 2026 Traffic Projection]
+    
+    F --> G[OLS Linear Regression: Traffic vs PRB %]
+    G --> H{Projected PRB > 70%?}
+    
+    H -- Yes --> I[Trigger Upgrade Engine: Step Up Configuration Ladder]
+    H -- No --> J[Maintain Current Hardware Layout]
+    
+    I --> K[Export Visual Visualizations & Multi-Tab Excel Report]
+    J --> K
