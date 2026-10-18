@@ -49,3 +49,47 @@ flowchart TD
     
     I --> K[Export Visual Visualizations & Executive Excel Report]
     J --> K
+telecom-capacity-forecasting/
+├── Capacity_Planning_GUI.ipynb   # Interactive Jupyter Notebook dashboard GUI
+├── capacity_planning_app.py      # Automated CLI pipeline execution script
+├── requirements.txt              # Environment dependencies
+├── README.md                     # Project documentation
+├── images/                       # Local image assets directory
+│   ├── cs.png
+│   ├── ps.jpg
+│   ├── linear_regression.png
+│   ├── xgboost_forecast_2026.jpg
+│   ├── xgboost_validation.jpg
+│   ├── prophet 2023 validation.jpg
+│   ├── prophet 2024 validation.jpg
+│   ├── prophet_2025_validation.jpg
+│   ├── prophet_2026_forecast.png
+│   ├── holtwinter_2026_forecasting.png
+│   └── holtwinter_2025_validation.png
+└── pipeline_outputs/             # Automatically generated at runtime
+    ├── network_forecast.png
+    ├── prb_regression.png
+    ├── upgrades.png
+    └── capacity_plan_dec2026.xlsx # Multi-sheet executive Excel report
+    # 1. Clone repository
+git clone [https://github.com/hatemhamid/Telecom-kpi-analysis-and-capacity-planning.git](https://github.com/hatemhamid/Telecom-kpi-analysis-and-capacity-planning.git)
+cd Telecom-kpi-analysis-and-capacity-planning
+
+# 2. Create and activate virtual environment
+python -m venv venv
+# On Windows:
+venv\Scripts\activate
+# On Mac/Linux:
+source venv/bin/activate
+
+# 3. Install dependencies
+pip install -r requirements.txt
+# Option 1: Run complete background pipeline via CLI
+python capacity_planning_app.py
+
+# Option 2: Launch interactive GUI in Jupyter Notebook
+jupyter notebook Capacity_Planning_GUI.ipynb
+<ElicitationsGroup>
+  <Elicitation prompt="How to add GitHub project badges or workflow status tags?" title="Add workflow badges?"/>
+  <Elicitation prompt="Generate an MIT LICENSE file content for this repository." title="Generate LICENSE file?"/>
+</ElicitationsGroup>
