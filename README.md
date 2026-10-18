@@ -1,54 +1,73 @@
-# Telecom KPI Analysis, XGBoost Forecasting & Capacity Planning
+<div align="center">
 
-An end-to-end Python telecom application and interactive Jupyter GUI dashboard[cite: 5]. The project analyzes Circuit-Switched (CS) voice and Packet-Switched (PS) data Key Performance Indicators (KPIs), forecasts network-level traffic growth using **XGBoost**, models site-level Physical Resource Block (PRB) utilization with linear regression and adaptive IQR outlier cleaning, and automatically triggers hierarchical site capacity upgrades[cite: 5, 7].
+# 📶 Telecom KPI Analysis, XGBoost Forecasting & Capacity Planning
 
----
+![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![XGBoost](https://img.shields.io/badge/XGBoost-v1.7%2B-orange.svg)
+![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-FF6F00.svg)
+![Status](https://img.shields.io/badge/status-Production--Ready-brightgreen.svg)
 
-## 📌 Key Features
-
-- **Multi-Layer KPI Analysis**: Analyzes CS KPIs (Availability, Call Drop Rate - CDR, Call Setup Success Rate - CSSR) and PS KPIs (Data Traffic, Throughput, PRB DL Utilization, E-RAB Drop Rate, Handover Success Rate) across regions and time horizons[cite: 5, 7].
-- **XGBoost Time-Series Forecasting**: Log-growth XGBoost forecaster evaluated using expanding-window rolling cross-validation and backtesting against Holt-Winters, Prophet, and Seasonal-Naive baselines[cite: 5, 7]. Includes 95% bootstrap confidence intervals[cite: 5, 7].
-- **PRB Utilization Modeling**: Linear regression mapping traffic payload (GB) to PRB utilization (%) after OLS residual filtering via Interquartile Range ($1.5 \times \text{IQR}$), achieving $R^2 > 0.80$[cite: 5, 7].
-- **Automated Upgrade Decision Engine**: Reconfiguration and expansion flow for sites exceeding a 70% PRB downlink threshold, mapping site transitions through a predefined hardware hierarchy[cite: 5, 7].
-- **Dual Execution Modes**: Interactive `ipywidgets` dashboard for Jupyter Notebooks alongside a standalone command-line Python script that generates visual figures and multi-tab Excel reports[cite: 5].
+**An end-to-end AI/ML network planning application for Circuit-Switched (CS) and Packet-Switched (PS) KPI analysis, time-series data forecasting, PRB utilization modeling, and automated site upgrade decisions.**
 
 ---
 
-## 📊 Analytical Model & Pipeline Summary
+</div>
 
-$$\text{PRB Utilization (\%)} = 1.2768 \times \text{Traffic (GB)} + 5.9872 \quad (R^2 = 0.8324)$$
-[cite: 7]
-
-1. **Traffic Growth**: Dec 2025 baseline ($2,000 \text{ TB/day}$) $\rightarrow$ Dec 2026 forecast ($2,780.34 \text{ TB/day}$), representing a **+39.12% YoY increase** (Growth Factor: $1.3912$)[cite: 7].
-2. **Action Threshold**: PRB Downlink Utilization $> 70\%$[cite: 5, 7].
-3. **Upgrade Hierarchy Ladder**:
-   $$\text{Normal 3 Sectors} \rightarrow \text{Normal 4 Sectors} \rightarrow \text{FDD M-MIMO} \rightarrow \text{TDD 1st Carrier} \rightarrow \text{TDD 2nd Carrier} \rightarrow \text{TDD M-MIMO} \rightarrow \text{Expand Site}$$
-[cite: 5, 7]
-4. **Capacity Recommendations**: Identifies **52 saturated sites** exceeding threshold (43 reconfigurations, 9 physical site expansions)[cite: 7].
-
----
-
-## 📁 Repository Structure
-
-```text
-telecom-capacity-forecasting/
-├── Capacity_Planning_GUI.ipynb  # Interactive Jupyter Notebook with ipywidgets GUI
-├── capacity_planning_app.py     # Standalone Python script for pipeline execution
-├── requirements.txt             # Python environment dependencies
-├── .gitignore                   # Ignores venv, raw excel datasets, and output folders
-├── README.md                    # Project documentation
-└── pipeline_outputs/            # Output directory generated at runtime
-    ├── network_forecast.png     # Historical vs 2026 XGBoost forecast plot
-    ├── prb_regression.png       # OLS linear regression scatter plot with IQR outliers
-    ├── upgrades.png             # PRB distribution histogram & upgrade step breakdown
-    └── capacity_plan_dec2026.xlsx # Multi-tab executive report
-```[cite: 5]
+## 📋 Table of Contents
+- [Executive Overview](#-executive-overview)
+- [Key Features](#-key-features)
+- [System Architecture](#-system-architecture)
+- [Tech Stack](#-tech-stack)
+- [Analytical Pipeline & Benchmark Results](#-analytical-pipeline--benchmark-results)
+- [Repository Structure](#-repository-structure)
+- [Dataset Specifications](#-dataset-specifications)
+- [Installation & Setup](#-installation--setup)
+- [Usage Guide](#-usage-guide)
+- [Outputs & Generated Reports](#-outputs--generated-reports)
+- [License](#-license)
 
 ---
 
-## ⚙️ Installation & Setup
+## 🚀 Executive Overview
 
-### 1. Clone Repository
-```bash
-git clone [https://github.com/](https://github.com/)<your-username>/telecom-capacity-forecasting.git
-cd telecom-capacity-forecasting
+Mobile network traffic growth requires precise forward-looking capacity planning to prevent congestion while optimizing capital expenditure (CapEx). This project implements a full-stack telemetry and machine learning pipeline:
+
+1. **Traffic Forecasting**: Predicts network-wide daily traffic 12 months ahead (through December 2026) using an autoregressive **XGBoost Regressor** validated against Prophet, Holt-Winters, and Seasonal Naive baselines.
+2. **Resource Modeling**: Fits Ordinary Least Squares (OLS) linear regression mapping traffic payload to Physical Resource Block (PRB) Downlink Utilization after automated Interquartile Range ($1.5 \times \text{IQR}$) residual cleaning.
+3. **Upgrade Decision Engine**: Evaluates individual site loads against a 70% PRB threshold and automatically schedules targeted hardware reconfigurations or physical site expansions along a predefined configuration hierarchy.
+
+---
+
+## ✨ Key Features
+
+- **Multi-Layer KPI Assessment**: Evaluates Circuit-Switched voice metrics (CSSR, CDR, Availability) and Packet-Switched data metrics (Data Traffic, Throughput, PRB Utilization, E-RAB DR, HO SR) across 5 geographic regions.
+- **Leak-Free Expanding-Window Validation**: Backtested over 3 historical test folds (2023, 2024, 2025) with hyperparameter tuning to ensure zero target leakage.
+- **Automated Outlier Rejection**: Applies dynamic residual IQR filtering to purge corrupted measurements, achieving $R^2 = 0.8324$.
+- **Rule-Based Capacity Engine**: Automatically advances high-utilization cells along a 7-stage configuration ladder.
+- **Dual Runtime Interface**: Supports automated background CLI execution (`capacity_planning_app.py`) and an interactive widget GUI in Jupyter (`Capacity_Planning_GUI.ipynb`).
+
+---
+
+## ⚙️ System Architecture
+
+```mermaid
+flowchart TD
+    A[Raw Input Data: Excel Workbook] --> B[Data Cleaning & IQR Outlier Filter]
+    B --> C1[CS & PS KPI Analytics Dashboard]
+    B --> C2[Time-Series Feature Engineering]
+    
+    C2 --> D1[XGBoost 2026 Traffic Forecast]
+    C2 --> D2[Baseline Models: Prophet / Holt-Winters]
+    
+    D1 --> E[Calculate YoY Growth Factor: +39.12%]
+    E --> F[Site-Level Dec 2026 Traffic Projection]
+    
+    F --> G[Linear Regression: Traffic vs PRB %]
+    G --> H{Projected PRB > 70%?}
+    
+    H -- Yes --> I[Trigger Upgrade Engine: Ladder Step Up]
+    H -- No --> J[Maintain Current Site Configuration]
+    
+    I --> K[Export PNG Visuals & Multi-Tab Excel Report]
+    J --> K
